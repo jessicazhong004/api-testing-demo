@@ -22,9 +22,10 @@ jobs:
       - name: Run Newman
         run: |
           mkdir -p reports
-          newman run postman/jsonplaceholder_api_tests.postman_collection.json \
-            -e postman/jsonplaceholder_local.postman_environment.json \
+          newman run "postman/API Testing Demo - JSONPlaceholder.postman_collection.json" \
+            -e "postman/Local - JSONPlaceholder.postman_environment.json" \
             -r htmlextra --reporter-htmlextra-export reports/report.html
+
 
 
       - name: Upload report
