@@ -1,35 +1,17 @@
-name: API Tests (Newman)
-
-on:
-  push:
-  pull_request:
-
-jobs:
-  newman:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-
-      - name: Install Newman + reporter
-        run: npm install -g newman newman-reporter-htmlextra
-
+      - name: Debug (list files + tool versions)
+        run: |
+          set -eux
+          pwd
+          ls -la
+          ls -la postman || true
+          node -v
+          npm -v
+          newman -v || true
 
       - name: Run Newman
         run: |
+          set -eux
           mkdir -p reports
           newman run "postman/API Testing Demo - JSONPlaceholder.postman_collection.json" \
             -e "postman/Local - JSONPlaceholder.postman_environment.json" \
             -r htmlextra --reporter-htmlextra-export reports/report.html
-
-
-
-      - name: Upload report
-        uses: actions/upload-artifact@v4
-        with:
-          name: newman-report
-          path: reports/report.html
