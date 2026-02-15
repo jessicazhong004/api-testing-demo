@@ -1,0 +1,99 @@
+{
+  "info": {
+    "_postman_id": "42a038e5-216a-4836-ad93-5411b55e9bf6",
+    "name": "API Testing Demo - JSONPlaceholder",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "15165339"
+  },
+  "item": [
+    {
+      "name": "smoke",
+      "item": [
+        {
+          "name": "GET users page 2",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"status is 200\", () => pm.response.to.have.status(200));",
+                  "",
+                  "const json = pm.response.json();",
+                  "pm.test(\"response is non-empty array\", () => {",
+                  "  pm.expect(Array.isArray(json)).to.be.true;",
+                  "  pm.expect(json.length).to.be.above(0);",
+                  "});",
+                  "",
+                  "pm.environment.set(\"userId\", json[0].id);",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "crud",
+      "item": []
+    },
+    {
+      "name": "negative",
+      "item": [
+        {
+          "name": "GET unknown 23 (404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"status is 404\", () => pm.response.to.have.status(404));",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/unknown/23",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "unknown",
+                "23"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "schema",
+      "item": []
+    }
+  ]
+}
