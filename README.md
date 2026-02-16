@@ -1,4 +1,6 @@
 # API Testing Demo (Postman + Newman + GitHub Actions)
+[![API Tests (Newman)](https://github.com/jessicazhong004/api-testing-demo/actions/workflows/newman.yml/badge.svg)](https://github.com/qingzhong/api-testing-demo/actions/workflows/newman.yml)
+
 
 A small API testing demo using a Postman collection executed by Newman.
 Includes GitHub Actions CI that runs on every push/PR and uploads an HTML report as a CI artifact.
