@@ -1,21 +1,24 @@
 # API Testing Demo (Postman + Newman + GitHub Actions)
 
-Small API testing demo using Postman collections executed by Newman.
-Includes GitHub Actions CI that runs on every push/PR and uploads an HTML report as an artifact.
+A small API testing demo using a Postman collection executed by Newman.
+Includes GitHub Actions CI that runs on every push/PR and uploads an HTML report as a CI artifact.
 
 ## Project Structure
+
 ```text
 .
 ├── .github/workflows/newman.yml
-└── postman
-├── api_tests.postman_collection.json
-└── local.postman_environment.json
+├── postman
+│   ├── api_tests.postman_collection.json
+│   └── local.postman_environment.json
+└── reports
+    └── report.html   (generated locally / in CI)
+
 ```
 
 ## Prerequisites
 
 - Node.js 18+ (Node 20 recommended)
-- Newman (optional locally if you use `npx`)
 
 ## Run Locally
 
@@ -25,36 +28,31 @@ From repo root:
 npx newman run postman/api_tests.postman_collection.json \
   -e postman/local.postman_environment.json
   ```
-(Optional) Generate an HTML report locally:
+
+**Generate an HTML Report Locally (Optional)**
+
 ```bash
 mkdir -p reports
 npm i -g newman newman-reporter-htmlextra
-```
+
 newman run postman/api_tests.postman_collection.json \
-```bash
+
   -e postman/local.postman_environment.json \
   -r htmlextra --reporter-htmlextra-export reports/report.html
-  ```
-
-Then open:
-```bash
+ 
 open reports/report.html
 ```
 **Environment Variables**
+
 The collection uses `{{baseUrl}}` to build request URLs (e.g. `{{baseUrl}}/users`).
 
-Make sure `postman/local.postman_environment.json` includes:
+In Postman, ensure the environment includes:
 
-* `baseUrl: https://jsonplaceholder.typicode.com`
+*  `baseUrl = https://jsonplaceholder.typicode.com`
 
-Example:
-```json
-{
-  "key": "baseUrl",
-  "value": "https://jsonplaceholder.typicode.com",
-  "enabled": true
-}
-```
+Note: the exported environment file is a full Postman environment JSON (not a single {` "key": "...", "value": "..." }` snippet).
+
+
 **CI (GitHub Actions)**
 Workflow: `.github/workflows/newman.yml`
 
@@ -80,7 +78,9 @@ What CI does:
 
 GitHub repo **→ Actions →** open the latest successful run **→ Artifacts** → download `newman-report` → open `report.html`.
 
-**Notes**
-* CI reads files from the GitHub repo. If you rename/move collection/environment files, update the paths in `newman.yml`.
+**Notes / Common Issues**
+* CI only reads files committed to the GitHub repo. If collection/environment files are untracked, the runner will fail with `ENOENT`.
 
-* If requests show `http:///...`, it usually means `baseUrl` in the exported environment JSON is empty or mismatched.
+* If requests show `http:///...`, it usually means `baseUrl` is empty/mismatched or the request URL is not using `{{baseUrl}}`.
+
+* If you rename/move files under `postman/`, update the paths in `.github/workflows/newman.yml`.
