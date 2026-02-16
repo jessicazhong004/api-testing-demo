@@ -1,0 +1,13 @@
+node_modules/
+reports/
+# macOS
+.DS_Store
+
+# Node
+node_modules/
+
+# Generated reports
+reports/
+
+# Local-only / scratch
+environments/
