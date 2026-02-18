@@ -1,0 +1,35 @@
+name: API Tests (Docker)
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "Dockerfile"
+      - ".dockerignore"
+      - "postman/**"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/api-docker.yml"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t api-testing-demo .
+
+      - name: Run API tests in Docker
+        run: |
+          mkdir -p reports
+          docker run --rm \
+            -v ${{ github.workspace }}/reports:/app/reports \
+            api-testing-demo
+
+      - name: Upload HTML report
+        uses: actions/upload-artifact@v4
+        with:
+          name: newman-report
+          path: reports/report.html
