@@ -50,6 +50,8 @@ newman-report
 You can find it under:
 
   GitHub → Actions → select a run → Artifacts → `newman-report`
+
 **What you'll see**
-* Locally: `npm run test:api` prints Newman’s summary in the terminal and writes `reports/report.html`.
-* In CI: each workflow uploads the HTML report (reports/report.html) as the newman-report artifact.
+- Locally: `npm run test:api` prints Newman’s summary in the terminal and writes `reports/report.html`.
+- In CI: each workflow uploads the HTML report (`reports/report.html`) as the `newman-report` artifact.
+- The collection includes a simple smoke GET, a CRUD `POST /posts` (201), and a negative 404 case to show basic error handling.
