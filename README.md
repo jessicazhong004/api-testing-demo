@@ -1,14 +1,13 @@
-# API Testing Demo (Postman + Newman + Docker)
+# API Testing Demo (Postman + Newman + Docker + CI)
 
 ![API Tests (Docker)](https://github.com/jessicazhong004/api-testing-demo/actions/workflows/api-docker.yml/badge.svg)
 ![API Tests (Newman)](https://github.com/jessicazhong004/api-testing-demo/actions/workflows/newman.yml/badge.svg)
 
 ## What is this?
 
-Small API testing demo that runs a Postman collection with Newman:
-- locally with `npm run test:api`
-- inside a Docker container
-- in GitHub Actions CI
+This repo is a small but realistic API testing demo.  
+It uses Postman + Newman, runs locally and in Docker, and is wired into GitHub Actions CI.  
+The target API is JSONPlaceholder (a public fake REST API), just like a typical internal service in a real project.
 
 ## Why it matters
 
@@ -18,11 +17,11 @@ Small API testing demo that runs a Postman collection with Newman:
 
 ## Tech stack
 
-- Postman collection + environment (JSON files under `postman/`)
-- Newman CLI (run via npm script)
-- Node.js + npm
-- Docker (containerized Newman run)
-- GitHub Actions (CI for both host-based and Docker-based runs)
+- Postman collection + environment (JSONPlaceholder endpoints)
+- Newman CLI (runs the collection from CLI / CI)
+- Node.js + npm scripts (single entry command)
+- Docker (containerized test run)
+- GitHub Actions (CI pipeline for both host-based and Docker-based runs on every push)
 
 ## Project structure
 
@@ -42,9 +41,11 @@ api-testing-demo/
   README.md
   ```
 
-## How to run
+## How to Run Locally
 
-### Local
+Prerequisite: Node.js (v18+ or v20) and npm installed.
+
+Install dependencies (one time or when `package-lock.json` changes):
 
 ```bash
 npm ci
@@ -54,18 +55,30 @@ This will generate a HTML report at:
 ```text
 reports/report.html
 ```
-**Docker**
-```bash
-docker build -t api-testing-demo .
-docker run --rm \
-  -v "$PWD/reports:/app/reports" \
-  api-testing-demo
-```
-The container run will also write the HTML report to:
-```text
+What this does:
+- Runs the Postman collection in `postman/api_tests.postman_collection.json`
+- Uses the environment `postman/local.postman_environment.json`
+- Generates / updates an HTML report under:
+```Plain text
 reports/report.html
 ```
-**CI (GitHub Actions)**
+You can open that file in a browser to see a visual test report.
+
+## How to Run in Docker
+Build the image:
+```bash
+docker build -t api-testing-demo .
+```
+Run the tests inside a container:
+```bash
+docker run --rm api-testing-demo
+```
+This will:
+- Install dependencies (from `package.json` / `package-lock.json`)
+- Run `npm run test:api` inside the container
+- Exit with code 0 on success, non-zero on failures (suitable for CI)
+
+## CI (GitHub Actions)
 Two workflows live in `.github/workflows`:
 * `newman.yml` – installs Newman globally and runs the Postman collection on the host.
 * `api-docker.yml` – builds the Docker image and runs the tests inside a container, mounting reports/.
@@ -77,7 +90,19 @@ You can find it under:
 
   GitHub → Actions → select a run → Artifacts → `newman-report`
 
-```md
+On every push (and pull request), GitHub Actions will:
+- Check out the code
+- Install Node.js and dependencies
+- Run the Newman tests via `npm run test:api`
+
+The goal is to keep the pipeline green and show a realistic “tests in CI” setup.
+
+## Test Artifacts
+
+- Newman HTML report: `reports/report.html`
+- Postman collection: `postman/api_tests.postman_collection.json`
+- Postman environment: `postman/local.postman_environment.json`
+
 ## What this demo validates
 
 - JSONPlaceholder `/posts` basic flows:
@@ -96,8 +121,9 @@ You can find it under:
 - Locally: `npm run test:api` prints Newman's summary in the terminal and writes `reports/report.html`.
 - In CI: each workflow uploads the HTML report (`reports/report.html`) as the `newman-report` artifact.
 
-## Next steps (future improvements)
-
-- Add a couple more endpoints (PUT / DELETE) for fuller CRUD coverage
-- Introduce basic data-driven tests (e.g. table of input/expected status)
-- Optionally add schema-style assertions for critical fields
+## Possible Next steps (Future Work)
+For v1.0, this repo is intentionally kept small and focused.
+Future extensions (not in scope yet):
+- Add more negative / edge case scenarios
+- Add simple schema validations
+- Parameterize environments (local / CI / other)
