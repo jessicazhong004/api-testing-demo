@@ -114,7 +114,6 @@ The goal is to keep the pipeline green and show a realistic “tests in CI” se
   - on your machine
   - inside a Docker container
   - in GitHub Actions
-  ```
 
 ## What you'll see when you run it
 
