@@ -27,8 +27,9 @@ jobs:
             -e postman/local.postman_environment.json \
             -r htmlextra --reporter-htmlextra-export reports/report.html
 
-      - name: Upload report artifact
+      - name: Upload Newman HTML report
         uses: actions/upload-artifact@v4
         with:
           name: newman-report
           path: reports/report.html
+
