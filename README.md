@@ -47,9 +47,12 @@ Prerequisite: Node.js (v18+ or v20) and npm installed.
 
 Install dependencies (one time or when `package-lock.json` changes):
 
+From the project root:
+
 ```bash
+npm install        # first time only
 npm ci
-npm run test:api
+npm run test:api   # runs the Postman collection with Newman and generates reports/report.html
 ```
 This will generate a HTML report at:
 ```text
